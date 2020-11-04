@@ -1,49 +1,50 @@
----
-title: "Mapa Interactiva"
-author: "Thibaut Plassot"
-date: "2/11/2020"
-knit: (function(input_file, encoding) {
-  out_dir <- 'docs';
-  rmarkdown::render(input_file,
- encoding=encoding,
- output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-
-```{r , echo=FALSE}
 
 library(rgdal)
 library(leaflet)
 
 
-categ<- readOGR("D:/OCDE results/All/Post_Relleno_filtro.shp",
-                  layer = "Post_Relleno_filtro", GDAL1_integer64_policy = FALSE)
 
-pal <- colorBin("YlOrRd", domain = categ$categoria_, bins = 2)
+ucenter<- readOGR("E:/Transfer/ucenter_mkdwn_lig.shp",
+                    layer = "ucenter_mkdwn_lig", GDAL1_integer64_policy = TRUE)
+
+ucluster<- readOGR("E:/Transfer/gridcluster.shp",
+                  layer = "gridcluster", GDAL1_integer64_policy = TRUE)
 
 
-cat <- leaflet(categ) %>%
+uc <- leaflet(ucluster) %>%
   addTiles() %>%
-  addPolygons( weight = 1, smoothFactor = 0.5,
+  addPolygons(color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
-              fillColor = ~pal(categoria_), color = "#444444",
+              highlightOptions = highlightOptions(color = "blue", weight = 2,
+                                                  bringToFront = TRUE),  label = ~as.numeric(ucluster$poblacion))
+
+uc
+
+
+uc <- leaflet(ucenter) %>%
+  addTiles() %>%
+  addPolygons(color = "blue", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+                           highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),  label = ~as.character(ucenter$Pobla))
+
+uc
+
+
+
+municipio<- readOGR("C:/Users/Thib/Documents/GIS DataBase/muni_2018gw/muni_2018gw.shp",
+                    layer = "muni_2018gw", GDAL1_integer64_policy = TRUE)
+
+
+states <- readOGR("C:/Users/Thib/Documents/GIS DataBase/Entidad Federativa/dest_2015gw/dest_2015gw.shp",
+                  layer = "dest_2015gw", GDAL1_integer64_policy = TRUE)
+
+m <- leaflet(ucenter) %>%
+  addTiles() %>%
+  addPolygons(color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorQuantile("YlOrRd", center_a_2)(center_a_2),
               highlightOptions = highlightOptions(color = "white", weight = 2,
-                                                  bringToFront = TRUE),  label = ~as.character(categ$POBTOT))
+                                                  bringToFront = TRUE),  label = ~as.character(states$AREA))
 
-cat
-
- 
-
-```
-
-## Including Plots
-
-Note 
+m
