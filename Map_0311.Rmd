@@ -1,6 +1,6 @@
 ---
-title: "Mapa Interactiva"
-author: "Thibaut Plassot"
+title: "Tipologías Territoriales: Aplicación de la metodología del OCDE en México"
+author: "Soloaga, Plassot y Reyes"
 date: "2/11/2020"
 knit: (function(input_file, encoding) {
   out_dir <- 'docs';
@@ -9,16 +9,66 @@ knit: (function(input_file, encoding) {
  output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
 ---
 
-```{r setup, include=FALSE}
+```{r setup, echo =FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+### Intro
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+La metodología se desarrolla en diferentes etapas y para distintos niveles. Primero se trabaja con celdas de 1km2 para identificar “Centros Urbanos”, “Clústeres Urbanos” y “Celdas Rurales”.
+A partir de lo anterior se puede clasificar territorios más grandes, se propone una “tipología local” y una “tipología regional”.
+
+Trabajamos con datos del Censo de 2010.
+
+El Mapa esta disponible en:
+<https://thib336.github.io/interactiv_maps/>.
 
 
-```{r , echo=FALSE}
+## 1. Numero de habitantes por celda de 1km2
+
+Tenemos puntos para localidades rurales (en verde) y poligonos de manzanas para zonas urbanas (poligonos
+grises). Es el mayor nivel de desagregación
+
+Pasamos cada manzana en punto
+
+Para cada punto tenemos la población.
+
+Generamos un grid de con celdas de 1km2
+
+Contamos la población en cada celda, es decir localidades rurales + manzanas urbanas
+
+
+## 2. Centros Urbanos
+
+Se considera centro urbano:
+-Celdas de mas de 1,500 habitantes que contiguamente forman un grupo de al menos 50,000 habitantes.
+-Celdas con al menos cinco vecinos que forman parte de un Centro Urbano
+
+Las celdas son contiguas si comparten el borde norte, sur, este o oeste, se excluyen las diagonales.
+En el ejemplo abajo solo el grupo 1 y el grupo 3 conforman un Centro Urbano ya que concentran mas de
+50,000habitantes.
+
+En un ultimo tiempo se rellenan huecos. si una celda tiene al menos 5 de sus 8 vecinos que pertence a un Centro
+Urbano entonces la celda se reasigna al Centro Urbano. En esta etapa se consideran los vecinos de las
+diagonales.
+Retomando el ejemplo anterior la celda en morado se vuelve “Centro Urbano”.
+
+Este proceso es iterativo.
+Se ven rellenando nuevas celdas en una segunda etapa (en rojo) y etcetera.
+Nota que ahora el Grupo 1 y 3 se vuelven parte un mismo centro urbano.
+En el caso de Aguascalientes solo se identifica un Centro Urbano
+
+## 3. Clusters Urbanos
+Se considera cluster urbano:
+-Celdas de mas de 300 habitantes que contiguamente forman un grupo de al menos 5,000 habitantes.
+De estamanera podemos identificar los Centros Urbanos y Clusters Urbanos en Aguascalientes.
+Las celdas que no forman parte de los Centros Urbanos y Clusters Urbanos son consideradas “Rurales”.
+
+
+
+
+
+```{r , echo=FALSE , message = FALSE , warning = FALSE}
 
 library(rgdal)
 library(leaflet)
@@ -44,6 +94,3 @@ cat
 
 ```
 
-## Including Plots
-
-Note 
