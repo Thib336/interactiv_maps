@@ -1,0 +1,49 @@
+---
+title: "Mapa Interactiva"
+author: "Thibaut Plassot"
+date: "2/11/2020"
+knit: (function(input_file, encoding) {
+  out_dir <- 'docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+
+```{r , echo=FALSE}
+
+library(rgdal)
+library(leaflet)
+
+
+categ<- readOGR("D:/OCDE results/All/Post_Relleno_filtro.shp",
+                  layer = "Post_Relleno_filtro", GDAL1_integer64_policy = FALSE)
+
+pal <- colorBin("YlOrRd", domain = categ$categoria_, bins = 2)
+
+
+cat <- leaflet(categ) %>%
+  addTiles() %>%
+  addPolygons( weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~pal(categoria_), color = "#444444",
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),  label = ~as.character(categ$POBTOT))
+
+cat
+
+ 
+
+```
+
+## Including Plots
+
+Note 
