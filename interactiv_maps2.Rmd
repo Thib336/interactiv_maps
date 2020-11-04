@@ -23,19 +23,22 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 library(rgdal)
 library(leaflet)
 
-states <- readOGR("C:/Users/Thib/Documents/GIS DataBase/Entidad Federativa/dest_2015gw/dest_2015gw.shp",
-                                    layer = "dest_2015gw", GDAL1_integer64_policy = TRUE)
 
-m <- leaflet(states) %>%
-    addTiles() %>%
-    addPolygons(color = "#444444", weight = 1, smoothFactor = 0.5,
-                            opacity = 1.0, fillOpacity = 0.5,
-                            fillColor = ~colorQuantile("YlOrRd", AREA)(AREA),
-                            highlightOptions = highlightOptions(color = "white", weight = 2,
-                                     bringToFront = TRUE),  label = ~as.character(states$AREA))
+categ<- readOGR("D:/OCDE results/All/Post_Relleno_filtro.shp",
+                  layer = "Post_Relleno_filtro", GDAL1_integer64_policy = FALSE)
 
-m
+pal <- colorBin("YlOrRd", domain = categ$categoria_, bins = 2)
 
+
+cat <- leaflet(categ) %>%
+  addTiles() %>%
+  addPolygons( weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~pal(categoria_), color = "#444444",
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),  label = ~as.character(categ$POBTOT))
+
+cat
 
  
 
